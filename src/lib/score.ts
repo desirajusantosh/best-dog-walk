@@ -38,10 +38,13 @@ export function scoreHour(h: HourWeather): HourScore {
     warnings.push('Pavement may be hot: stick to grass')
   }
 
-  // Rain
-  score -= h.precipProbability * 0.45
+  // Rain: a steady penalty, plus extra once rain is likely or near-certain.
+  score -= h.precipProbability * 0.4
+  if (h.precipProbability >= 60) score -= 15
+  if (h.precipProbability >= 85) score -= 10
   if (h.precipitation >= 2) score -= 15
-  if (h.precipProbability >= 60) warnings.push('Rain likely')
+  if (h.precipProbability >= 85) warnings.push('Rain almost certain')
+  else if (h.precipProbability >= 60) warnings.push('Rain likely')
 
   // Storms
   if (h.weatherCode >= 95) {
